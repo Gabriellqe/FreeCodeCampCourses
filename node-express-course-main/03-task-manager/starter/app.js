@@ -3,10 +3,17 @@ const app = express();
 const tasks = require("./routes/task");
 const port = process.env.PORT || 5000;
 const connectDB = require("./db/connect.js");
+const bodyParser = require("body-parser");
 require("dotenv").config();
 
+
 // Middleware
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 app.use("/api/v1/tasks", tasks);
+
 
 const start = async () => {
   try {
