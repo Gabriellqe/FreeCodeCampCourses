@@ -4,6 +4,8 @@ const tasks = require("./routes/task");
 const port = process.env.PORT || 5000;
 const connectDB = require("./db/connect.js");
 const bodyParser = require("body-parser");
+const notFound = require("./middleware/not-found");
+const errorHandler = require("./middleware/error-handler");
 require("dotenv").config();
 
 
@@ -13,7 +15,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use("/api/v1/tasks", tasks);
-
+app.use(notFound);
+app.use(errorHandler);
 
 const start = async () => {
   try {
