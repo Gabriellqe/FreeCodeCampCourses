@@ -45,27 +45,46 @@ app.post("/api/shorturl", function (req, res) {
       //If no address is returned then the DNS dont exist
       if (!address) {
         res.json({ error: "invalid url" });
-      } else {
+      }
+      // Otherwise we hava a valid URL
+      else {
+        //Check that URL does not already exist in the DB
         let original_url = urlObj.href;
-        let short_url = 1;
-        //get the latest number shorturl
-        URLModel.find({})
-          .sort({ short_url: "desc" })
-          .limit(1)
-          .then(async (lastestURL) => {
-            if (lastestURL.length > 0) {
-              short_url = parseInt(lastestURL[0].short_url) + 1;
-            }
-            let resObj = { original_url: original_url, short_url: short_url };
+        URLModel.findOne({ original_url: original_url }).then((foundURL) => {
+          if (foundURL) {
+            res.json({
+              original_url: foundURL.original_url,
+              short_url: foundURL.short_url,
+            });
+          }
 
-            try {
-              let newURL = new URLModel(resObj);
-              await newURL.save();
-              res.json(resObj);
-            } catch (error) {
-              res.status(200).json({ error: "Cant save in DB" });
-            }
-          });
+          // If url doesnt exist then add to db
+          else {
+            let short_url = 1;
+            //get the latest number shorturl
+            URLModel.find({})
+              .sort({ short_url: "desc" })
+              .limit(1)
+              .then(async (lastestURL) => {
+                if (lastestURL.length > 0) {
+                  short_url = parseInt(lastestURL[0].short_url) + 1;
+                }
+                let resObj = {
+                  original_url: original_url,
+                  short_url: short_url,
+                };
+
+                // Create a new object in mongodb
+                try {
+                  let newURL = new URLModel(resObj);
+                  await newURL.save();
+                  res.json(resObj);
+                } catch (error) {
+                  res.status(200).json({ error: "Cant save in DB" });
+                }
+              });
+          }
+        });
       }
     });
   } catch (error) {
