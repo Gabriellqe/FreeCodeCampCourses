@@ -8,11 +8,6 @@ const dns = require("node:dns");
 // Basic Configuration
 const port = process.env.PORT || 3000;
 
-const connectDB = (url) => {
-  mongoose.set("strictQuery", false);
-  return mongoose.connect(url);
-};
-
 app.use("/", bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use("/public", express.static(`${process.cwd()}/public`));
@@ -29,6 +24,19 @@ app.get("/", function (req, res) {
 });
 
 // Your first API endpoint
+app.get("/api/shorturl/:short_url", function (req, res) {
+  let short_url = req.params.short_url;
+  //Find the original URL front DB
+  URLModel.findOne({ short_url: short_url }).then((foundURL) => {
+    if (foundURL) {
+      let original_url = foundURL.original_url;
+      res.redirect(original_url);
+    } else {
+      res.json({ error: "The short url does not exist" });
+    }
+  });
+});
+
 app.post("/api/shorturl", function (req, res) {
   let url = req.body.url;
   try {
@@ -39,20 +47,36 @@ app.post("/api/shorturl", function (req, res) {
         res.json({ error: "invalid url" });
       } else {
         let original_url = urlObj.href;
-        let resObj = { original_url: original_url, short_url: 3 };
-        try {
-          let newURL = new URLModel(resObj);
-          await newURL.save();
-          res.json(resObj);
-        } catch (error) {
-          res.status(200).json({ error: "Cant save in DB" });
-        }
+        let short_url = 1;
+        //get the latest number shorturl
+        URLModel.find({})
+          .sort({ short_url: "desc" })
+          .limit(1)
+          .then(async (lastestURL) => {
+            if (lastestURL.length > 0) {
+              short_url = parseInt(lastestURL[0].short_url) + 1;
+            }
+            let resObj = { original_url: original_url, short_url: short_url };
+
+            try {
+              let newURL = new URLModel(resObj);
+              await newURL.save();
+              res.json(resObj);
+            } catch (error) {
+              res.status(200).json({ error: "Cant save in DB" });
+            }
+          });
       }
     });
   } catch (error) {
     res.json({ error: "catch error" });
   }
 });
+
+const connectDB = (url) => {
+  mongoose.set("strictQuery", false);
+  return mongoose.connect(url);
+};
 
 const start = async () => {
   try {
