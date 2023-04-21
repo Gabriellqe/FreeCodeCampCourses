@@ -1,9 +1,11 @@
-const Job = require("../models/Job");
+const JobModel = require("../models/Job");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, NotFoundError } = require("../errors");
 
 const getAllJobs = async (req, res) => {
-  const jobs = await Job.find({ createdBy: req.user.userId }).sort("createdAt");
+  const jobs = await JobModel.find({ createdBy: req.user.userId }).sort(
+    "createdAt"
+  );
   res.status(StatusCodes.OK).json({ jobs, count: jobs.length });
 };
 
@@ -13,7 +15,7 @@ const getJob = async (req, res) => {
     params: { id: jobId },
   } = req;
 
-  const job = await Job.findOne({
+  const job = await JobModel.findOne({
     _id: jobId,
     createdBy: userId,
   });
@@ -25,7 +27,7 @@ const getJob = async (req, res) => {
 
 const createJob = async (req, res) => {
   req.body.createdBy = req.user.userId;
-  const job = await Job.create(req.body);
+  const job = await JobModel.create(req.body);
   res.status(StatusCodes.CREATED).json({ job });
 };
 
@@ -40,7 +42,7 @@ const updateJob = async (req, res) => {
     throw new BadRequestError("Company or Position fields cannot be empty");
   }
 
-  const job = await Job.findByIdAndUpdate(
+  const job = await JobModel.findByIdAndUpdate(
     { _id: jobId, createdBy: userId },
     req.body,
     { new: true, runValidators: true }
@@ -57,7 +59,7 @@ const deleteJob = async (req, res) => {
     params: { id: jobId },
   } = req;
 
-  const job = await Job.findByIdAndRemove({
+  const job = await JobModel.findByIdAndRemove({
     _id: jobId,
     createdBy: userId,
   });
