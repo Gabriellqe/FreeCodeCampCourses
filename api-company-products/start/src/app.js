@@ -20,6 +20,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Routes
-app.use("/api/products", productRoutes);
+app.use("/api/v1/products", productRoutes);
 
 export default app;
