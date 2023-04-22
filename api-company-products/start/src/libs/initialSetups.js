@@ -1,5 +1,6 @@
 import RoleModel from "../models/Role.js";
 import UserModel from "../models/User.js";
+import { ADMIN_EMAIL, ADMIN_USERNAME, ADMIN_PASSWORD } from "../config.js";
 
 export const createRoles = async () => {
   try {
@@ -16,3 +17,25 @@ export const createRoles = async () => {
     console.error(error);
   }
 };
+
+export const createAdmin = async () => {
+  // check for an existing admin user
+  const userFound = await UserModel.findOne({ email: ADMIN_EMAIL });
+  if (userFound) return;
+
+  // get roles _id
+  const roles = await RoleModel.find({ name: { $in: ["admin", "moderator"] } });
+
+  // create a new admin user
+  const newUser = await UserModel.create({
+    username: ADMIN_USERNAME,
+    email: ADMIN_EMAIL,
+    password: ADMIN_PASSWORD,
+    roles: roles.map((role) => role._id),
+  });
+
+  console.log(`new user created: ${newUser.email}`);
+};
+
+createRoles();
+createAdmin();

@@ -6,6 +6,7 @@ import {
   deleteProductById,
   getProductById,
 } from "../controllers/products.controller";
+import { isModerator, isAdmin, verifyToken } from "../middlewares/authjwt.js";
 
 const router = Router();
 
@@ -13,10 +14,10 @@ router.get("/", getProducts);
 
 router.get("/:productId", getProductById);
 
-router.post("/", createProduct);
+router.post("/", [verifyToken, isModerator], createProduct);
 
-router.put("/:productId", updateProductById);
+router.put("/:productId", [verifyToken, isModerator], updateProductById);
 
-router.delete("/:productId", deleteProductById);
+router.delete("/:productId", [verifyToken, isAdmin], deleteProductById);
 
 export default router;

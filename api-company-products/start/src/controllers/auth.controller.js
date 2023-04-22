@@ -9,7 +9,7 @@ export const signupHandler = async (req, res) => {
     const newUser = new UserModel({
       username,
       email,
-      password: await UserModel.encryptPassword(password),
+      password,
     });
 
     // checking for roles
