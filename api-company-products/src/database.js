@@ -9,8 +9,6 @@ const connectDB = async (url) => {
   }
 };
 
-connectDB(
-  "mongodb+srv://admin:Betel279@cluster0.gsjkuo2.mongodb.net/REST-Products?retryWrites=true&w=majority"
-);
+connectDB(process.env.MONGO_URI);
 
 export default connectDB;
