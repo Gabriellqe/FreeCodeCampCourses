@@ -1,0 +1,62 @@
+#!/bin/bash
+PSQL="psql -X --username=freecodecamp --dbname=periodic_table --tuples-only -c"
+INPUT=$1
+
+if [[ -z $1 ]] #check if input is empty
+then
+    echo "Please provide an element as an argument."
+else
+    if [[ ! $INPUT =~ ^[0-9]+$ ]] #check if input is a number
+    then
+        LENGTH=$(echo -n "$INPUT" | wc -m) #get the length of the input
+        
+        if [[ $LENGTH -gt 2 ]] # check if input is greater than two letter
+        
+        then
+            #get data by name ex Hydrogen
+            DATA=$($PSQL "SELECT * FROM elements INNER JOIN properties USING(atomic_number) INNER JOIN types USING (type_id) WHERE name='$INPUT'")
+            
+            if [[ -z $DATA ]] #Check if data is empty
+            then
+                echo "I could not find that element in the database."
+            else
+                #Desctructure the data in variables
+                echo "$DATA" | while read BAR BAR NUMBER BAR SYMBOL BAR NAME BAR WEIGHT BAR MELTING BAR BOILING BAR TYPE
+                do #echo the data
+                    echo  "The element with atomic number $NUMBER is $NAME ($SYMBOL). It's a $TYPE, with a mass of $WEIGHT amu. $NAME has a melting point of $MELTING celsius and a boiling point of $BOILING celsius."
+                done
+            fi
+            
+        else
+            # get data by atomic symbol
+            DATA=$($PSQL "SELECT * FROM elements INNER JOIN properties USING(atomic_number) INNER JOIN types USING (type_id) WHERE symbol='$INPUT'")
+            
+            if [[ -z $DATA ]] #Check if data is empty
+            then
+                echo "I could not find that element in the database."
+            else
+                #Desctructure the data in variables
+                
+                echo "$DATA" | while read BAR BAR NUMBER BAR SYMBOL BAR NAME BAR WEIGHT BAR MELTING BAR BOILING BAR TYPE
+                do #echo the data
+                    echo  "The element with atomic number $NUMBER is $NAME ($SYMBOL). It's a $TYPE, with a mass of $WEIGHT amu. $NAME has a melting point of $MELTING celsius and a boiling point of $BOILING celsius."
+                done
+            fi
+            
+        fi
+        
+    else
+        # if input is a number then get data by atomic number
+        DATA=$($PSQL "SELECT * FROM elements INNER JOIN properties USING(atomic_number) INNER JOIN types USING (type_id) WHERE atomic_number=$INPUT")
+        if [[ -z $DATA ]] #Check if data is empty
+        then
+            echo "I could not find that element in the database."
+        else
+            #Desctructure the data in variables
+            echo "$DATA" | while read BAR BAR NUMBER BAR SYMBOL BAR NAME BAR WEIGHT BAR MELTING BAR BOILING BAR TYPE
+            do #echo the data
+                echo  "The element with atomic number $NUMBER is $NAME ($SYMBOL). It's a $TYPE, with a mass of $WEIGHT amu. $NAME has a melting point of $MELTING celsius and a boiling point of $BOILING celsius."
+            done
+        fi
+    fi
+fi
