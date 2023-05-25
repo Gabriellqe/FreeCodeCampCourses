@@ -1,0 +1,71 @@
+body {
+  background-color: rgb(255, 255, 255);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-top: 2rem;
+}
+
+#description {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 1rem;
+}
+
+#survey-form {
+  width: 50%;
+  margin: 0 auto;
+  margin-top: 2rem;
+}
+
+#name-label,
+#email-label,
+#number-label {
+  display: block;
+  margin-top: 1rem;
+}
+
+#name,
+#email,
+#number {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(0, 0, 0);
+  margin-top: 0.5rem;
+}
+
+#dropdown {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(0, 0, 0);
+  margin-top: 0.5rem;
+}
+
+#submit {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(0, 0, 0);
+  margin-top: 0.5rem;
+  background-color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
+  font-size: 1.5rem;
+}
+
+#submit:hover {
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+}
+
+#comments {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(0, 0, 0);
+  margin-top: 0.5rem;
+}
