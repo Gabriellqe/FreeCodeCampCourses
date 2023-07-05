@@ -57,7 +57,7 @@ export const deleteUserById = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    await user.remove();
+    await User.delete({ id: parseInt(req.params.id) });
     console.log("User deleted successfully");
     res.json({ message: "User deleted successfully" });
   } catch (error) {
