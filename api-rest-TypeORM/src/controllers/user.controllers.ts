@@ -29,6 +29,38 @@ export const getUsers = async (req: Request, res: Response) => {
 
 export const getUserById = async (req: Request, res: Response) => {};
 
-export const updateUserById = async (req: Request, res: Response) => {};
+export const updateUserById = async (req: Request, res: Response) => {
+  const { firstname, lastname, active } = req.body;
+  try {
+    const user = await User.findOneBy({ id: parseInt(req.params.id) });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-export const deleteUserById = async (req: Request, res: Response) => {};
+    await User.update(user.id, {
+      firstname: firstname,
+      lastname: lastname,
+      active: active,
+    });
+
+    console.log("User updated successfully");
+    res.json(user);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+
+export const deleteUserById = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findOneBy({ id: parseInt(req.params.id) });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await user.remove();
+    console.log("User deleted successfully");
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
